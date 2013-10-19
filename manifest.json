@@ -1,0 +1,21 @@
+{
+	"manifest_version": 2,
+	
+	"name": "SE Chat MathJax",
+	"version": "1.0",
+	"description": "A Chrome Extension that enables the use of MathJax in all open chat windows.",
+
+	"background": {
+		"scripts": ["background.js"]
+	},
+	
+	"web_accessible_resources": ["http://cdn.mathjax.org/mathjax/latest/MathJax.js", "Jax.js"],
+	
+	"icons": {
+		"128": "so-icon.png"
+	},
+	
+	"permissions": [
+		"storage", "tabs", "http://chat.stackexchange.com/rooms/*"
+	]
+}
