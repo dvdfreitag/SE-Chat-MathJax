@@ -5,7 +5,7 @@ if(window.MathJax === undefined)
 {
 	var script = document.createElement("script");
 	script.type="text/javascript";
-	script.src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	script.src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
 	var config='MathJax.Hub.Config({"HTML-CSS": { ' +
 			   'webFont: "TeX", ' +
 			   'preferredFont: "TeX", ' + 
@@ -97,7 +97,19 @@ var beatInterval = 5000;
 function beat() {
 	setTimeout(function() {	
 		if(window.MathJax !== undefined)
+		{
 			MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+			$.each($('script[type="math/tex"]'), function(index, value) { 
+				if ($(value).parent().data('events') === undefined) { 
+					$(value).parent().click(function() { 
+						if ($(value).parent().html().split($(value).html() || []).length - 1 === 1) {
+							$(value).parent().append(' \\$' + $(value).html() + '\\$');
+						}
+					}); 
+				} 
+			});
+		}
 	
 		if(update && !stop)
 			beat();
