@@ -13,10 +13,6 @@
 		{
 	    	"resources": ["style/extension.css", "script/extension.js"],
       		"matches": ["*://cdn.mathjax.org/*"]
-		},
-		{
-	    	"resources": ["Jax.js"],
-      		"matches": ["chrome-extension://*/Jax.js"]
 		}
     ],
 	
