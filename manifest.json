@@ -11,10 +11,15 @@
 	
 	"web_accessible_resources": [
 		{
-	    	"resources": ["style/extension.css", "script/extension.js"],
-      		"matches": ["*://cdn.mathjax.org/*"]
+			"resources": ["style/extension.css", "script/extension.js"],
+	  		"matches": ["*://cdn.mathjax.org/*"]
+		},
+		{
+			"resources": ["Jax.js"],
+	  		"matches": ["<all_urls>"],
+			"use_dynamic_url": true
 		}
-    ],
+	],
 	
 	"icons": {
 		"128": "so-icon.png"
