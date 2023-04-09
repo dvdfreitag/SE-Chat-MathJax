@@ -6,14 +6,15 @@ if(window.MathJax === undefined)
 	var script = document.createElement("script");
 	script.type="text/javascript";
 	script.src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-	var config='MathJax.Hub.Config({"HTML-CSS": { ' +
+	var config='MathJax.Ajax.config.path["mhchem"]="https://cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.2";' +
+			   'MathJax.Hub.Config({"HTML-CSS": { ' +
 			   'webFont: "TeX", ' +
 			   'preferredFont: "TeX", ' + 
 			   'availableFonts: ["STIX","TeX"], ' +
 			   'linebreaks: { automatic:true }, '+
 			   'EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) }, ' +
 			   'tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno|last-message" }, ' +
-			   'TeX: { extensions: ["mhchem.js", "enclose.js", "cancel.js"], noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%25" } } }, ' +
+			   'TeX: { extensions: ["[mhchem]/mhchem.js", "enclose.js", "cancel.js"], noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%25" } } }, ' +
 			   'messageStyle: "none"}); ' +
 			   'MathJax.Hub.Startup.onload();';
 				   
