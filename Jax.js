@@ -1,119 +1,217 @@
 var stop = false;
 var update = true;
+var beatInterval = 5000;
 
-if(window.MathJax === undefined)
+MathJax =
 {
-	var script = document.createElement("script");
-	script.type="text/javascript";
-	script.src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-	var config='MathJax.Ajax.config.path["mhchem"]="https://cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.2";' +
-			   'MathJax.Hub.Config({"HTML-CSS": { ' +
-			   'webFont: "TeX", ' +
-			   'preferredFont: "TeX", ' + 
-			   'availableFonts: ["STIX","TeX"], ' +
-			   'linebreaks: { automatic:true }, '+
-			   'EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) }, ' +
-			   'tex2jax: { inlineMath: [ ["$", "$"] ], displayMath: [ ["$$","$$"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno|last-message" }, ' +
-			   'TeX: { extensions: ["[mhchem]/mhchem.js", "enclose.js", "cancel.js"], noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%25" } } }, ' +
-			   'messageStyle: "none"}); ' +
-			   'MathJax.Hub.Startup.onload();';
-				   
-	if(window.opera) {
-		script.innerHTML = config;
-	} else {
-		script.text = config;
+	tex:
+	{
+		inlineMath:
+		[
+			[
+				"$",
+				"$"
+			]
+		],
+		displayMath:
+		[
+			[
+				"$$",
+				"$$"
+			]
+		],
+		processEscapes: true,
+		noundefined:
+		{
+			color: "red",
+			background: "#FFEEEE",
+			size: "90%25"
+		},
+		packages:
+		{
+			'[+]':
+			[
+				'base',
+				'enclose',
+				'cancel',
+				'mhchem'
+			]
+		}
+	},
+	options:
+	{
+		ignoreHtmlClass: "tex2jax_ignore|dno|last-message"
+	},
+	loader:
+	{
+		load:
+		[
+			'[tex]/enclose',
+			'[tex]/cancel',
+			'[tex]/mhchem'
+		]
+	},
+	startup:
+	{
+		pageReady: () =>
+		{
+			return MathJax.startup.defaultPageReady().then(() =>
+			{
+				console.log("MathJax is loaded, initial typesetting is triggered");
+			});
+		}
 	}
-		
-	document.getElementsByTagName("head")[0].appendChild(script);
-	
-	$('#chat-buttons').prepend('<button class="button" id="math-button">MathJax</button>');
-	$('#math-button').click(function() {
-		$('body').append('<div id="jax-popup-bg" class="wmd-prompt-background" style="position: fixed; top: 0px; z-index: 1000; opacity: 0.5; left: 0px; width: 100%; height: 100%;"></div>' +
-						 '<div id="jax-popup" style="top: 50%; left: 50%; display: block; padding: 10px; position: fixed; width: 150px; z-index: 1001; margin-top: -93.5px; margin-left: -113px;" class="wmd-prompt-dialog">' +
-							 '<div align="center">' +
-								 '<b>MathJax</b><br>' + 
-								 'Interval:' +
-								 '<input type="text" id="jax-heartbeat" style="width: 80px; margin-left: 10px" title="In miliseconds" value="' + beatInterval + '"/><br>' +
-								 '<input type="checkbox" id="jax-update" title="Use an ajax handler instead of a heartbeat">Update</input>' +
-								 '<input type="checkbox" id="jax-disable" style="margin-left: 10px" title="Temporarily stops MathJax from updating">Disable</input>' +
-							 '</div>' +
-							
-							 '<button id="jax-ok" class="button">Ok</button>' +
-							 '<button id="jax-cancel" style="margin-left: 10px" class="button">Cancel</button>' +
-							 '<script type="text/javascript">' +
-								 '$("#jax-update").prop("checked", update);' +
-								 '$("#jax-disable").prop("checked", stop);' +
-								 '$("#jax-heartbeat").prop("disabled", !update || stop);' +
-								 '$("#jax-update").prop("disabled", stop);' +
-							 
-								 '$("#jax-ok").click(function() {' +
-									 'if($.isNumeric($("#jax-heartbeat").val()) && parseInt($("#jax-heartbeat").val()) >= 1000) {' +
-										 'if($("#jax-update").prop("checked") && !$("#jax-disable").prop("checked")) {' +
-											 'beatInterval = parseInt($("#jax-heartbeat").val());' +
-										 '}' +
-										 
-										 'if(!$("#jax-disable").prop("checked")) {' +
-											 'update = $("#jax-update").prop("checked");' +
-										 '}' +
-										 
-										 'stop = $("#jax-disable").prop("checked");' +
-										 '$("#jax-popup").remove();' +
-										 '$("#jax-popup-bg").remove();' +
-									 '} else {' +
-										 'alert("Values must be numeric and no less than 1000");' +
-									 '}' +
-								 '});' +
-								 
-								 '$("#jax-cancel").click(function() {' +
-									 '$("#jax-popup").remove();' +
-									 '$("#jax-popup-bg").remove();' +
-								 '});' +
-									 
-								 '$("#jax-update").click(function() {' +
-									 '$("#jax-heartbeat").prop("disabled", !$("#jax-update").prop("checked"));' +
-								 '});' +
-								 
-								 '$("#jax-disable").click(function() {' +
-									 '$("#jax-heartbeat").prop("disabled", $("#jax-disable").prop("checked"));' +
-									 '$("#jax-update").prop("disabled", $("#jax-disable").prop("checked"));' +
-								 '});' +
-							 '</script>' +
-						 '</div>');
-	});
-} else {
-	if(window.MathJax !== undefined)
-		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-}
+};
 
-$('document').ready(function() {
+$('document').ready(() =>
+{
+	var popup =
+`<div id="jax-popup-bg" class="wmd-prompt-background" style="position: fixed; top: 0px; z-index: 1000; opacity: 0.5; left: 0px; width: 100%; height: 100%;"></div>
+<div id="jax-popup" style="top: 50%; left: 50%; display: block; padding: 10px; position: fixed; width: 150px; z-index: 1001; margin-top: -93.5px; margin-left: -113px;" class="wmd-prompt-dialog">
+	<div align="center">
+		<b>MathJax</b>
+		<br>
+
+		Interval:
+		<input type="text" id="jax-heartbeat" style="width: 80px; margin-left: 10px" title="In miliseconds" value="` + beatInterval + `"/>
+		<br>
+
+		<input type="checkbox" id="jax-update" title="Use an ajax handler instead of a heartbeat">Update</input>
+		<input type="checkbox" id="jax-disable" style="margin-left: 10px" title="Temporarily stops MathJax from updating">Disable</input>
+	</div>
+
+	<button id="jax-ok" class="button">Ok</button>
+	<button id="jax-cancel" style="margin-left: 10px" class="button">Cancel</button>
+
+	<script type="text/javascript">
+		// Set the initial UI state from globals
+		$("#jax-update").prop("checked", update);
+		$("#jax-disable").prop("checked", stop);
+		$("#jax-heartbeat").prop("disabled", !update || stop);
+		$("#jax-update").prop("disabled", stop);
+
+		// Register an onClick() event handler to the Add button
+		$("#jax-ok").click(function()
+		{
+			// If the configured hearbeat timeout is a valid number and greater than 1 second,
+			if ($.isNumeric($("#jax-heartbeat").val()) && parseInt($("#jax-heartbeat").val()) >= 1000)
+			{
+				// ... and we're configured to update automatically,
+				if ($("#jax-update").prop("checked") && !$("#jax-disable").prop("checked"))
+				{
+					// ... update the heartbeat timeout value
+					beatInterval = parseInt($("#jax-heartbeat").val());
+				}
+
+				// ... and we're enabled,
+				if (!$("#jax-disable").prop("checked"))
+				{
+					// ... set the global update value
+					update = $("#jax-update").prop("checked");
+				}
+
+				// set the global stop value
+				stop = $("#jax-disable").prop("checked");
+
+				// Finally, clean up the popup window
+				$("#jax-popup").remove();
+				$("#jax-popup-bg").remove();
+			}
+			else
+			{
+				// Otherwise, let the user know the timeout value is not valid
+				alert("Interval values must be numeric and no less than 1000");
+			}
+		});
+
+		// Register an onClick() event handler to the canel button,
+		$("#jax-cancel").click(function()
+		{
+			// ... to clean up the popup window
+			$("#jax-popup").remove();
+			$("#jax-popup-bg").remove();
+		});
+
+		// Register an onClick() event handler to the update checkbox,
+		$("#jax-update").click(function()
+		{
+			// ... which enables or disables the heartbeat text box as needed
+			$("#jax-heartbeat").prop("disabled", !$("#jax-update").prop("checked"));
+		});
+
+		// Register an onClick() event handler to the disable checkbox,
+		$("#jax-disable").click(function()
+		{
+			// ... which enables or disables the heartbeat text box and update check box as needed
+			$("#jax-heartbeat").prop("disabled", $("#jax-disable").prop("checked"));
+			$("#jax-update").prop("disabled", $("#jax-disable").prop("checked"));
+		});
+	</script>
+</div>`;
+
+	// Create a script object to add the MathJax configuration
+	var script = document.createElement("script");
+	script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js";
+
+	// Add MathJax to the page
+	document.getElementsByTagName("head")[0].appendChild(script);
+
+	// Create MathJax button in the chat buttons list
+	$('#chat-buttons').prepend('<button class="button" id="math-button">MathJax</button>');
+
+	$('#math-button').click(function()
+	{
+		$('body').append(popup);
+	});
+
+	// Run first heartbeat
 	beat();
 });
 
-$('html').ajaxComplete(function() {
+$('html').ajaxComplete(() =>
+{
 	if(!update && !stop)
-		MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+	{
+		typeset();
+	}
 });
 
-var beatInterval = 5000;
-function beat() {
-	setTimeout(function() {	
-		if(window.MathJax !== undefined)
-		{
-			MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+function typeset()
+{
+	// Run a synchronous typeset operation in MathJax on the entire page
+	MathJax.typeset();
 
-			$.each($('script[type="math/tex"]'), function(index, value) { 
-				if ($(value).parent().data('events') === undefined) { 
-					$(value).parent().click(function() { 
-						if ($(value).parent().html().split($(value).html() || []).length - 1 === 1) {
-							$(value).parent().append(' \\$' + $(value).html() + '\\$');
-						}
-					}); 
-				} 
+	// For each item which has been typeset,
+	$.each($('script[type="math/tex"]'), function(index, value)
+	{
+		if ($(value).parent().data('events') === undefined)
+		{
+			// ... append an onClick() event,
+			$(value).parent().click(function()
+			{
+				if ($(value).parent().html().split($(value).html() || []).length - 1 === 1)
+				{
+					// ... which will display the original LaTeX code with tags
+					$(value).parent().append(' \\$' + $(value).html() + '\\$');
+				}
 			});
 		}
-	
-		if(update && !stop)
-			beat();
+	});
+}
 
+/**
+ * Hearbeat function to typeset all LaTeX messages posted into the chat window
+ */
+function beat()
+{
+	// Create a timeout function using the configured interval
+	setTimeout(() =>
+	{
+		typeset();
+
+		if (update && !stop)
+		{
+			beat();
+		}
 	}, beatInterval);
 };
